@@ -9,9 +9,9 @@ public class Calculator {
 
     static int curPosition;
 
-    static lexem curLex;
+    static Lexem curLex;
 
-    enum lexem {
+    enum Lexem {
         NUM,
         PLUS,
         MINUS,
@@ -34,7 +34,7 @@ public class Calculator {
 
     public static void getLexem() throws Exception {
         if (curPosition >= calcExpr.length()) {
-            curLex = lexem.END;
+            curLex = Lexem.END;
             return;
         }
         char c = calcExpr.charAt(curPosition);
@@ -47,30 +47,30 @@ public class Calculator {
             c = calcExpr.charAt(curPosition);
         }
         if (curPosition >= calcExpr.length()) {
-            curLex = lexem.END;
+            curLex = Lexem.END;
             return;
         }
         if (Character.isDigit(c) || Character.isLetter(c)) {
-            curLex = lexem.NUM;
+            curLex = Lexem.NUM;
         } else {
-            switch(c) {
+            switch (c) {
                 case '+':
-                    curLex = lexem.PLUS;
+                    curLex = Lexem.PLUS;
                     break;
                 case '-':
-                    curLex = lexem.MINUS;
+                    curLex = Lexem.MINUS;
                     break;
                 case '*':
-                    curLex = lexem.MUL;
+                    curLex = Lexem.MUL;
                     break;
                 case '/':
-                    curLex = lexem.DIV;
+                    curLex = Lexem.DIV;
                     break;
                 case '(':
-                    curLex = lexem.OPEN;
+                    curLex = Lexem.OPEN;
                     break;
                 case ')':
-                    curLex = lexem.CLOSE;
+                    curLex = Lexem.CLOSE;
                     break;
                 default:
                     throw new Exception("Bad symbol");
@@ -92,7 +92,7 @@ public class Calculator {
     }
 
     public static BigInteger parseMultiplier() throws Exception {
-        switch (curLex){
+        switch (curLex) {
             case NUM:
                 BigInteger answer = numValue;
                 getLexem();
@@ -100,7 +100,7 @@ public class Calculator {
             case OPEN:
                 getLexem();
                 answer = parseExpr();
-                if (curLex == lexem.CLOSE) {
+                if (curLex == Lexem.CLOSE) {
                     getLexem();
                 } else {
                     throw new Exception("Bad bracket balance");
@@ -121,13 +121,13 @@ public class Calculator {
 
     public static BigInteger parseSummand() throws Exception {
         BigInteger ans = parseMultiplier();
-        while (curLex == lexem.MUL || curLex == lexem.DIV) {
-            lexem curSign = curLex;
+        while (curLex == Lexem.MUL || curLex == Lexem.DIV) {
+            Lexem curSign = curLex;
             getLexem();
-            if (curSign == lexem.MUL) {
+            if (curSign == Lexem.MUL) {
                 ans = ans.multiply(parseMultiplier());
             }
-            if (curSign == lexem.DIV) {
+            if (curSign == Lexem.DIV) {
                 BigInteger nextValue = parseMultiplier();
                 if (nextValue == BigInteger.ZERO) {
                     throw new Exception("Division by zero");
@@ -140,13 +140,13 @@ public class Calculator {
 
     public static BigInteger parseExpr() throws Exception {
         BigInteger ans = parseSummand();
-        while (curLex == lexem.PLUS || curLex == lexem.MINUS) {
-            lexem curSign = curLex;
+        while (curLex == Lexem.PLUS || curLex == Lexem.MINUS) {
+            Lexem curSign = curLex;
             getLexem();
-            if (curSign == lexem.PLUS) {
+            if (curSign == Lexem.PLUS) {
                 ans = ans.add(parseSummand());
             }
-            if (curSign == lexem.MINUS) {
+            if (curSign == Lexem.MINUS) {
                 ans = ans.subtract(parseSummand());
             }
         }
@@ -158,25 +158,24 @@ public class Calculator {
         curPosition = 0;
         try {
             getLexem();
-        } catch(Exception e) {
-            System.err.println(e);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
             System.exit(1);
         }
         try {
             BigInteger answer = parseExpr();
-            if (curLex != lexem.END) {
-                if (curLex == lexem.CLOSE) {
+            if (curLex != Lexem.END) {
+                if (curLex == Lexem.CLOSE) {
                     System.err.println("Bad balance");
-                }
-                else {
+                } else {
                     System.err.println("Bad lexem");
                 }
                 System.exit(1);
             } else {
                 System.out.println(answer.toString(19));
             }
-        } catch(Exception e) {
-            System.err.println(e);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
             System.exit(1);
         }
     }
