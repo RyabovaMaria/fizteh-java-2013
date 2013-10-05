@@ -158,6 +158,10 @@ public class Calculator {
         curPosition = 0;
         try {
             getLexem();
+            if (curLex == Lexem.END) {
+                System.err.println("Please, write arithmetic expression");
+                System.exit(1);
+            }
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.exit(1);
