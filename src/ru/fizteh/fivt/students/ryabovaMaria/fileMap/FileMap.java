@@ -11,11 +11,11 @@ import ru.fizteh.fivt.students.ryabovaMaria.shell.Shell;
 public class FileMap {
     public static Shell shell;
     public static FileMapCommands commands;
-    public static HashMap<String, String> loadList = new HashMap();
-    public static File currentDir;
+    public static HashMap<String, String> loadList = new HashMap<String, String>();
+    public static File curDir;
     
     public static void loadFile() throws Exception {
-        File dbFile = currentDir.toPath().resolve("db.dat").toFile();
+        File dbFile = curDir.toPath().resolve("db.dat").toFile();
         if (!dbFile.exists()) {
             throw new FileNotFoundException();
         }
@@ -122,26 +122,27 @@ public class FileMap {
     }
     
     public static void main(String[] args) {
-        String getPropertyString = System.getProperty("user.dir");
+        String getPropertyString = System.getProperty("fizteh.db.dir");
         if (getPropertyString == null) {
             System.err.println("I can't find this directory");
             System.exit(1);
         }
-        currentDir = new File(getPropertyString);
+        curDir = new File(getPropertyString);
         try {
             loadFile();
         } catch (FileNotFoundException e) {
         } catch (Exception e) {
-            System.err.println("Incorrect files db.dat");
+            System.err.println("Incorrect file db.dat");
             System.exit(1);
         }
         commands = new FileMapCommands(loadList);
-        shell = new Shell(commands, "user.dir");
+        commands.currentDir = curDir;
+        shell = new Shell(commands);
         int argc = args.length;
         if (argc == 0) {
-            Shell.interactive();
+            shell.interactive();
         } else {
-            Shell.packet(args);
+            shell.packet(args);
         }
         try { 
             FileMap.writeIntoFile();
