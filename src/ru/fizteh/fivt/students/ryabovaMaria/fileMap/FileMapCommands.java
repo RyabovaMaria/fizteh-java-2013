@@ -78,12 +78,6 @@ public class FileMapCommands extends  AbstractCommands{
     }
     
     public void exit() {
-        try { 
-            FileMap.writeIntoFile();
-        } catch (Exception e) {
-            System.err.println("I can't write into db.dat");
-            System.exit(1);
-        }
         System.exit(0);
     }
 }
