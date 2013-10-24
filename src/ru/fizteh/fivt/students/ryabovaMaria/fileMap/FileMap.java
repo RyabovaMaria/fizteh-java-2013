@@ -3,6 +3,7 @@ package ru.fizteh.fivt.students.ryabovaMaria.fileMap;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -86,8 +87,10 @@ public class FileMap {
     public static void writeIntoFile() throws Exception {
         File dbFile = commands.currentDir.toPath().resolve("db.dat").toFile();
         RandomAccessFile db;
+        Files.deleteIfExists(dbFile.toPath());
+        Files.createFile(dbFile.toPath());
         db = new RandomAccessFile(dbFile, "rw");
-        try {    
+        try {
             db.setLength(0);
             Iterator<Map.Entry<String, String>> it;
             it = commands.list.entrySet().iterator();
@@ -122,7 +125,7 @@ public class FileMap {
     }
     
     public static void main(String[] args) {
-        String getPropertyString = System.getProperty("fizteh.db.dir");
+        String getPropertyString = System.getProperty("user.dir");
         if (getPropertyString == null) {
             System.err.println("I can't find this directory");
             System.exit(1);
@@ -143,12 +146,6 @@ public class FileMap {
             shell.interactive();
         } else {
             shell.packet(args);
-        }
-        try { 
-            FileMap.writeIntoFile();
-        } catch (Exception e) {
-            System.err.println("I can't write into db.dat");
-            System.exit(1);
         }
     }
 }
