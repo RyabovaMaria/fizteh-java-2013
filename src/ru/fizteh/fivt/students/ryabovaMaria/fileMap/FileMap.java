@@ -127,10 +127,18 @@ public class FileMap {
     public static void main(String[] args) {
         String getPropertyString = System.getProperty("fizteh.db.dir");
         if (getPropertyString == null) {
-            System.err.println("I can't find this directory");
+            System.err.println("Bad property");
             System.exit(1);
         }
         curDir = new File(getPropertyString);
+        if (!curDir.exists()) {
+            System.err.println(getPropertyString + "doesn't exsists");
+            System.exit(1);
+        }
+        if (!curDir.isDirectory()) {
+            System.err.println(getPropertyString + " is not a directory");
+            System.exit(1);
+        }
         try {
             loadFile();
         } catch (FileNotFoundException e) {
